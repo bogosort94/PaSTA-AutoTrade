@@ -1,14 +1,32 @@
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
+
+######## Abseil ##############
 http_archive(
-  name = "com_google_absl",
+  name = "absl",
   urls = ["https://github.com/abseil/abseil-cpp/archive/20200923.3.zip"],
   strip_prefix = "abseil-cpp-20200923.3",
 )
 
+######## Google Test #########
 git_repository(
     name = "gtest",
     remote = "https://github.com/google/googletest",
     branch = "v1.10.x",
+)
+
+######## Google Log ##########
+http_archive(
+    name = "com_github_gflags_gflags",
+    sha256 = "34af2f15cf7367513b352bdcd2493ab14ce43692d2dcd9dfc499492966c64dcf",
+    strip_prefix = "gflags-2.2.2",
+    urls = ["https://github.com/gflags/gflags/archive/v2.2.2.tar.gz"],
+)
+
+http_archive(
+    name = "glog",
+    sha256 = "62efeb57ff70db9ea2129a16d0f908941e355d09d6d83c9f7b18557c0a7ab59e",
+    strip_prefix = "glog-d516278b1cd33cd148e8989aec488b6049a4ca0b",
+    urls = ["https://github.com/google/glog/archive/d516278b1cd33cd148e8989aec488b6049a4ca0b.zip"],
 )

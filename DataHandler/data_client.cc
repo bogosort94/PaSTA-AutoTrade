@@ -3,6 +3,7 @@
 #include <iostream>
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
+#include "glog/logging.h"
 
 ABSL_FLAG(bool, data_client_no_run, false,
           "The data client will stop running after subscribing to data "
@@ -45,19 +46,19 @@ context_ptr DataClient::OnTlsInit() {
                      boost::asio::ssl::context::no_sslv3 |
                      boost::asio::ssl::context::single_dh_use);
   } catch (std::exception& e) {
-    std::cout << "Error in context pointer: " << e.what() << std::endl;
+    LOG(ERROR) << "Error in context pointer: " << e.what();
   }
   return ctx;
 }
 
-// TODO: Integrate with a logging util.
 absl::Status DataClient::Run() {
   if (auth_.empty()) {
-    std::cerr << "Authentication information not provided." << std::endl;
+    LOG(ERROR) << "Authentication information not provided.";
     return absl::UnauthenticatedError(
         "Authentication information not provided.");
   }
   try {
+    LOG(INFO) << "Initializing Data Client.";
     // Set logging to be error-only
     c_.clear_access_channels(websocketpp::log::alevel::all);
     c_.set_error_channels(websocketpp::log::elevel::all);
@@ -72,8 +73,7 @@ absl::Status DataClient::Run() {
     websocketpp::lib::error_code ec;
     client::connection_ptr con = c_.get_connection(data_url.c_str(), ec);
     if (ec) {
-      std::cerr << "Could not create connection because: " << ec.message()
-                << std::endl;
+      LOG(ERROR) << "Could not create connection because: " << ec.message();
       return absl::UnavailableError("Could not create connection because: " +
                                     ec.message());
     }
@@ -87,7 +87,7 @@ absl::Status DataClient::Run() {
     // will exit when this connection is closed.
     c_.run();
   } catch (websocketpp::exception const& e) {
-    std::cout << e.what() << std::endl;
+    LOG(ERROR) << "Internal error: " << e.what();
     return absl::InternalError(e.what());
   }
 
@@ -96,13 +96,13 @@ absl::Status DataClient::Run() {
 
 void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
                            client::message_ptr msg) {
-  std::cout << "\t" << msg->get_payload() << std::endl;
   websocketpp::lib::error_code ec;
   switch (state_) {
     case INIT:
       if (msg->get_payload().find("Connected Successfully") !=
           std::string::npos) {
         state_ = CONNECTED;
+        LOG(INFO) << "Data client is successfully connected.";
         c->send(
             hdl,
             std::string("{\"action\":\"auth\",\"params\":\"" + auth_ + "\"}"),
@@ -110,9 +110,11 @@ void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
         if (ec) {
           status_ =
               absl::AbortedError("Failed sending authentication message.");
+          LOG(ERROR) << "Failed sending authentication message.";
           c->stop();
         }
       } else {
+        LOG(ERROR) << "Data client connection failed: " << msg->get_payload();
         status_ =
             absl::UnavailableError("Unexpected message: " + msg->get_payload());
         c->stop();
@@ -121,14 +123,17 @@ void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
     case CONNECTED:
       if (msg->get_payload().find("authenticated") != std::string::npos) {
         state_ = AUTHENTICATED;
+        LOG(INFO) << "Data client authenticated.";
         c->send(hdl,
                 std::string("{\"action\":\"subscribe\",\"params\":\"A.*\"}"),
                 websocketpp::frame::opcode::text, ec);
         if (ec) {
+          LOG(ERROR) << "Failed sending data subscription message.";
           status_ = absl::AbortedError("Failed subscribing to data supplier.");
           c->stop();
         }
       } else {
+        LOG(ERROR) << "Data client authentication failed: " << msg->get_payload();
         status_ = absl::UnauthenticatedError("Unexpected message: " +
                                              msg->get_payload());
         c->stop();
@@ -137,9 +142,11 @@ void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
     case AUTHENTICATED:
       if (msg->get_payload().find("subscribed to") != std::string::npos) {
         state_ = SUBSCRIBED;
+        LOG(INFO) << "Data subscription succeeded.";
       } else {
         status_ =
             absl::AbortedError("Unexpected message: " + msg->get_payload());
+        LOG(INFO) << "Data subscription failed: " << msg->get_payload();
         c->stop();
       }
       if (absl::GetFlag(FLAGS_data_client_no_run)) {
@@ -153,8 +160,7 @@ void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
       break;
     default:
       // case NUM_CLIENT_STATE
-      status_ = absl::UnknownError("Unknown data client state.");
-      c->stop();
+      LOG(FATAL) << "Unknown data client state.";
   }
 }
 
