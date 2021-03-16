@@ -14,6 +14,16 @@ cc_library(
               "-lcrypto",],
 )
 
+cc_library(
+    name = "agg_data",
+    hdrs = ["agg_data.h"],
+    srcs = ["agg_data.cc"],
+    deps = [
+      "//proto:data_cc_proto",
+      "@glog//:glog",
+    ],
+)
+
 cc_test(
   name = "data_client_test",
   srcs = ["data_client_test.cc"],
@@ -23,4 +33,16 @@ cc_test(
       "@glog//:glog",
       "@gtest//:gtest",
   ],
+)
+
+cc_test(
+    name = "agg_data_test",
+    srcs = ["agg_data_test.cc"],
+    deps = [
+      ":agg_data",
+      "@absl//absl/status",
+      "@com_google_protobuf//:protobuf",
+      "@glog//:glog",
+      "@gtest//:gtest",
+    ],
 )
