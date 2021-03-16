@@ -1,0 +1,52 @@
+syntax = "proto3";
+package pasta;
+
+message AggregateDataProto {
+  // Polygon event type. Should always be "A" for per-second aggregates.
+  string ev = 1;
+
+  // The ticker symbol for the stock.
+  string sym = 2;
+
+  // The tick volume.
+  int64 v = 3;
+
+  // Today's accumulated volume.
+  int64 av = 4;
+
+  // Today's official opening price.
+  double op = 5;
+
+  // Today's volume weighted average price.
+  double vw = 6;
+
+  // The opening tick price for this aggregate window.
+  double o = 7;
+
+  // The closing tick price for this aggregate window.
+  double c = 8;
+
+  // The highest tick price for this aggregate window.
+  double h = 9;
+
+  // The lowest tick price for this aggregate window.
+  double l = 10;
+
+  // The tick's volume weighted average price.
+  double a = 11;
+
+  // The average trade size for this aggregate window.
+  int64 z = 12;
+
+  // The timestamp of the starting tick for this aggregate window in Unix
+  // Milliseconds.
+  int64 s = 13;
+
+  // The timestamp of the ending tick for this aggregate window in Unix
+  // Milliseconds.
+  int64 e = 14;
+}
+
+message AggregateDataResponseProto {
+  repeated AggregateDataProto aggs = 1;
+}
