@@ -1,5 +1,5 @@
-#ifndef AGG_DATA_H_
-#define AGG_DATA_H_
+#ifndef PASTA_DATA_HANDLER_AGG_DATA_H_
+#define PASTA_DATA_HANDLER_AGG_DATA_H_
 
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/flag.h"
@@ -77,4 +77,4 @@ class AggDataStore {
 
 extern absl::Flag<int64_t> FLAGS_agg_data_store_size;
 
-#endif  // AGG_DATA_H_
+#endif  // PASTA_DATA_HANDLER_AGG_DATA_H_

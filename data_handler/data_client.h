@@ -1,5 +1,5 @@
-#ifndef DATA_CLIENT_H_
-#define DATA_CLIENT_H_
+#ifndef PASTA_DATA_HANDLER_DATA_CLIENT_H_
+#define PASTA_DATA_HANDLER_DATA_CLIENT_H_
 
 #include "absl/container/flat_hash_map.h"
 #include "absl/flags/flag.h"
@@ -68,4 +68,4 @@ class DataClient {
 // For testing purpose only.
 extern absl::Flag<bool> FLAGS_data_client_no_run;
 
-#endif  // DATA_CLIENT_H_
+#endif  // PASTA_DATA_HANDLER_DATA_CLIENT_H_
