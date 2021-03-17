@@ -20,6 +20,9 @@ cc_library(
     srcs = ["agg_data.cc"],
     deps = [
       "//proto:data_cc_proto",
+      "@absl//absl/container:flat_hash_map",
+      "@absl//absl/flags:flag",
+      "@absl//absl/status",
       "@glog//:glog",
     ],
 )
@@ -33,6 +36,7 @@ cc_test(
       "@glog//:glog",
       "@gtest//:gtest",
   ],
+  linkopts = ["-lboost_system",],
 )
 
 cc_test(
