@@ -26,7 +26,7 @@ class DataClient {
 
   void SetAuthentication(const std::string auth);
   absl::Status RegisterFunc(const std::string& name,
-                            std::function<void(std::string_view)> func);
+                            std::function<void(const std::string&)> func);
   absl::Status UnregisterFunc(const std::string& name);
   absl::Status Run();
 
@@ -59,7 +59,7 @@ class DataClient {
   ClientState state_;
 
   // Functions to be called upon message.
-  absl::flat_hash_map<std::string, std::function<void(std::string_view)>>
+  absl::flat_hash_map<std::string, std::function<void(const std::string&)>>
       reg_func_;
 };
 

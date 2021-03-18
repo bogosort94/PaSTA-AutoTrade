@@ -14,8 +14,9 @@ namespace pasta {
 const std::string DataClient::data_url = "wss://socket.polygon.io/stocks";
 
 void DataClient::SetAuthentication(const std::string auth) { auth_ = auth; }
+
 absl::Status DataClient::RegisterFunc(
-    const std::string& name, std::function<void(std::string_view)> func) {
+    const std::string& name, std::function<void(const std::string&)> func) {
   if (reg_func_.count(name) > 0) {
     return absl::AlreadyExistsError("Function name <" + name +
                                     "> is already registered.");
@@ -133,7 +134,8 @@ void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
           c->stop();
         }
       } else {
-        LOG(ERROR) << "Data client authentication failed: " << msg->get_payload();
+        LOG(ERROR) << "Data client authentication failed: "
+                   << msg->get_payload();
         status_ = absl::UnauthenticatedError("Unexpected message: " +
                                              msg->get_payload());
         c->stop();
