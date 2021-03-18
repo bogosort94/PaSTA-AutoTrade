@@ -1,9 +1,10 @@
 #include "data_handler/data_client.h"
 
-#include <iostream>
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
 #include "glog/logging.h"
+
+#include <fstream>
 
 ABSL_FLAG(bool, data_client_no_run, false,
           "The data client will stop running after subscribing to data "
@@ -12,6 +13,16 @@ ABSL_FLAG(bool, data_client_no_run, false,
 namespace pasta {
 
 const std::string DataClient::data_url = "wss://socket.polygon.io/stocks";
+
+std::string DataClient::GetCredential() {
+  std::ifstream credential_file("credentials/polygon.credential");
+  std::string credential_str;
+  CHECK(credential_file.is_open());
+  std::getline(credential_file, credential_str);
+  credential_file.close();
+  LOG(INFO) << "Got Polygon credential: " << credential_str;
+  return credential_str;
+}
 
 void DataClient::SetAuthentication(const std::string auth) { auth_ = auth; }
 

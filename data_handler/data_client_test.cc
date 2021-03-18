@@ -13,9 +13,9 @@ class DataClientTest : public ::testing::Test {};
 TEST_F(DataClientTest, ConnectAndSubscribe) {
   absl::SetFlag(&FLAGS_data_client_no_run, true);
   DataClient dc;
-  dc.SetAuthentication("U0xZEcN2ecwK6PqW8jVMH6F5MniB1GKN");
+  dc.SetAuthentication(dc.GetCredential());
   absl::Status s = dc.Run();
-  EXPECT_TRUE(s.ok());
+  EXPECT_EQ(s, absl::OkStatus());
 }
 
 TEST_F(DataClientTest, AuthenticationFailure) {

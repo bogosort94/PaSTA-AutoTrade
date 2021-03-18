@@ -58,6 +58,7 @@ cc_test(
       "@glog//:glog",
       "@gtest//:gtest",
   ],
+  data = ["//credentials"],
 )
 
 cc_test(

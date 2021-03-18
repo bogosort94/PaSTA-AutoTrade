@@ -24,6 +24,7 @@ class DataClient {
  public:
   DataClient() : status_(absl::OkStatus()), state_(INIT) {}
 
+  std::string GetCredential();
   void SetAuthentication(const std::string auth);
   absl::Status RegisterFunc(const std::string& name,
                             std::function<void(const std::string&)> func);
