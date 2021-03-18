@@ -43,3 +43,6 @@ bazel-PaSTA-AutoTrade
 .vagrant/
 Vagrantfile
 .idea/
+
+# Data supplier and broker credentials
+credentials/
