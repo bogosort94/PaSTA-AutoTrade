@@ -29,7 +29,8 @@ class DataHandlerTest : public ::testing::Test {
 TEST_F(DataHandlerTest, CallbackCount) {
   int cb_count = 0;
   EXPECT_EQ(
-      dh.RegisterCallback("count_callback", [&cb_count]() { ++cb_count; }),
+      dh.RegisterCallback("count_callback",
+                          [&cb_count](std::string ticker) { ++cb_count; }),
       absl::OkStatus());
 
   dh.ProcessMessage(GetMessage({kTestCases_1[0]}));

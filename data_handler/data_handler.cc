@@ -14,7 +14,8 @@ namespace pasta {
 DataHandler::DataHandler(DataClient* dc) : dc_(dc) {}
 
 void DataHandler::Init() {
-  absl::Status s = dc_->RegisterFunc("data_handler_process_message",
+  absl::Status s = dc_->RegisterFunc(
+      "data_handler_process_message",
       std::bind(&DataHandler::ProcessMessage, this, std::placeholders::_1));
 }
 
@@ -26,7 +27,8 @@ const AggDataStore::AggDataQueue& DataHandler::GetData(
 void DataHandler::ProcessMessage(const std::string& msg) {
   AggregateDataResponseProto proto;
   DLOG(INFO) << "Processing message " << msg;
-  auto s = google::protobuf::util::JsonStringToMessage("{aggs:" + msg + "}", &proto);
+  auto s =
+      google::protobuf::util::JsonStringToMessage("{aggs:" + msg + "}", &proto);
   CHECK(s.ok());
   CHECK(proto.aggs_size() > 0);
   for (int i = 0; i < proto.aggs_size(); ++i) {
@@ -39,12 +41,12 @@ void DataHandler::AddData(const AggregateDataProto& proto) {
     data.AddData(proto);
   }
   for (auto name_cb : strategy_cb_) {
-    name_cb.second();
+    name_cb.second(proto.sym());
   }
 }
 
-absl::Status DataHandler::RegisterCallback(const std::string& name,
-                                           std::function<void()> cb) {
+absl::Status DataHandler::RegisterCallback(
+    const std::string& name, std::function<void(std::string)> cb) {
   if (strategy_cb_.count(name) > 0) {
     return absl::AlreadyExistsError("Callback name <" + name +
                                     "> is already registered.");

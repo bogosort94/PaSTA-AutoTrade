@@ -32,7 +32,7 @@ class DataHandler {
                                             const std::string& ticker);
 
   absl::Status RegisterCallback(const std::string& name,
-                                std::function<void()> cb);
+                                std::function<void(std::string)> cb);
   absl::Status UnregisterCallback(const std::string& name);
 
  private:
@@ -44,7 +44,8 @@ class DataHandler {
       AggDataStore(1), AggDataStore(10), AggDataStore(60), AggDataStore(300)};
 
   // Methods to call upon new data.
-  absl::flat_hash_map<std::string, std::function<void()>> strategy_cb_;
+  absl::flat_hash_map<std::string, std::function<void(std::string)>>
+      strategy_cb_;
 };
 
 }  // namespace pasta
