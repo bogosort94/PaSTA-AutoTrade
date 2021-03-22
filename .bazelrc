@@ -2,3 +2,10 @@ common --cxxopt='-std=c++1z'
 build --show_timestamps --keep_going --jobs 600
 build --color=yes
 query --keep_going
+
+
+common --action_env=POLYGON_KEY=U0xZEcN2ecwK6PqW8jVMH6F5MniB1GKN
+common --action_env=APCA_API_KEY_ID=<Alpaca API Key ID>
+common --action_env=APCA_API_SECRET_KEY=<Alpaca API Secret Key>
+common --action_env=APCA_API_BASE_URL=paper-api.alpaca.markets
+common --action_env=APCA_API_DATA_URL=data.alpaca.markets

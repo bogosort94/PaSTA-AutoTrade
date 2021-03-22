@@ -31,6 +31,7 @@ cc_library(
   name = "data_handler",
   hdrs = ["data_handler.h"],
   srcs = ["data_handler.cc"],
+  visibility = ["//visibility:public"],
   deps = [
     ":agg_data",
     ":data_client",
@@ -58,7 +59,6 @@ cc_test(
       "@glog//:glog",
       "@gtest//:gtest",
   ],
-  data = ["//credentials"],
 )
 
 cc_test(
