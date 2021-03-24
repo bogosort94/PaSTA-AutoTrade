@@ -6,7 +6,7 @@ cc_library(
       "@absl//absl/container:flat_hash_map",
       "@absl//absl/flags:flag",
       "@absl//absl/status",
-      "@glog//:glog",
+      "@com_github_google_glog//:glog",
   ],
   linkopts = ["-lpthread",
               "-lboost_system",
@@ -23,7 +23,7 @@ cc_library(
     "@absl//absl/container:flat_hash_map",
     "@absl//absl/flags:flag",
     "@absl//absl/status",
-    "@glog//:glog",
+    "@com_github_google_glog//:glog",
   ],
 )
 
@@ -39,7 +39,7 @@ cc_library(
     "@absl//absl/container:flat_hash_map",
     "@absl//absl/container:inlined_vector",
     "@absl//absl/status",
-    "@glog//:glog",
+    "@com_github_google_glog//:glog",
   ],
 )
 
@@ -47,6 +47,10 @@ cc_library(
   name = "data_handler_testutil",
   hdrs = ["data_handler_testutil.h"],
   srcs = ["data_handler_testutil.cc"],
+  visibility = ["//visibility:public"],
+  deps = [
+    "@com_github_google_glog//:glog",
+  ],
   linkopts = ["-lboost_system",],
 )
 
@@ -56,7 +60,7 @@ cc_test(
   deps = [
       ":data_client",
       "@absl//absl/flags:flag",
-      "@glog//:glog",
+      "@com_github_google_glog//:glog",
       "@gtest//:gtest",
   ],
 )
@@ -69,7 +73,7 @@ cc_test(
     ":data_handler_testutil",
     "@absl//absl/status",
     "@com_google_protobuf//:protobuf",
-    "@glog//:glog",
+    "@com_github_google_glog//:glog",
     "@gtest//:gtest",
   ],
 )
@@ -81,7 +85,7 @@ cc_test(
     ":data_handler",
     ":data_handler_testutil",
     "@absl//absl/status",
-    "@glog//:glog",
+    "@com_github_google_glog//:glog",
     "@gtest//:gtest",
   ],
 )

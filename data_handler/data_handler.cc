@@ -37,7 +37,7 @@ void DataHandler::ProcessMessage(const std::string& msg) {
 }
 
 void DataHandler::AddData(const AggregateDataProto& proto) {
-  for (auto data : agg_data_) {
+  for (auto& data : agg_data_) {
     data.AddData(proto);
   }
   for (auto name_cb : strategy_cb_) {

@@ -1,5 +1,7 @@
 #include "data_handler/data_handler_testutil.h"
 
+#include "glog/logging.h"
+
 #include <boost/format.hpp>
 
 namespace pasta {
@@ -13,6 +15,16 @@ std::string MakeAggProto(std::string ev, std::string sym, int64_t v, int64_t av,
                  R"tag("z":%12%,"s":%13%,"e":%14%})tag") %
              ev % sym % v % av % op % vw % o % c % h % l % a % z % s % e;
   return fmt.str();
+}
+
+std::string GetMessage(std::vector<std::string> test_cases) {
+  CHECK(!test_cases.empty());
+  std::string msg = "[" + test_cases[0];
+  for (int i = 1; i < test_cases.size(); ++i) {
+    msg += "," + test_cases[i];
+  }
+  msg += "]";
+  return msg;
 }
 
 std::string kTestCases_1[] = {

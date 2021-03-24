@@ -13,11 +13,11 @@
 namespace pasta {
 
 enum DataStoreIndex {
-  ONE_SEC,
-  TEN_SEC,
-  ONE_MINUTE,
-  FIVE_MINUTE,
-  NUM_DATA_STORE,
+  ONE_SEC = 0,
+  TEN_SEC = 1,
+  ONE_MIN = 2,
+  FIVE_MIN = 3,
+  NUM_DATA_STORE = 4,
 };
 
 class DataHandler {
@@ -44,7 +44,7 @@ class DataHandler {
       AggDataStore(1), AggDataStore(10), AggDataStore(60), AggDataStore(300)};
 
   // Methods to call upon new data.
-  absl::flat_hash_map<std::string, std::function<void(std::string)>>
+  absl::flat_hash_map<std::string, std::function<void(const std::string&)>>
       strategy_cb_;
 };
 

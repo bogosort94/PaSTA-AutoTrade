@@ -6,8 +6,6 @@
 #include "glog/logging.h"
 #include "proto/data.pb.h"
 
-#define NUM_MICROS_PER_SECOND 1000
-
 ABSL_FLAG(
     int64_t, agg_data_store_size, 30,
     "The amount of aggregate windows that each AggDataStore keeps track of.");
@@ -75,42 +73,39 @@ const AggDataStore::AggDataQueue& AggDataStore::GetData(
 bool AggDataStore::AddData(const AggregateDataProto& data_proto) {
   CHECK(data_proto.ev() == "A");
   std::string ticker = data_proto.sym();
-  return AddDataHelper(data_proto, &(data_[ticker]));
+
+  auto& data = data_[ticker];
+  if (data.empty() || IsNewAggregate(data_proto, data.front())) {
+    // Add a new aggregate window. Align timestamp.
+    bool old_window_not_closed = !data.empty() && !IsClosed(data.front());
+    data.push_front(AggregateData(data_proto));
+    data.front().start_ = AggWindowStart(data.front().start_);
+    if (data.size() > absl::GetFlag(FLAGS_agg_data_store_size)) {
+      data.pop_back();
+    }
+    return IsClosed(data.front()) || old_window_not_closed;
+  } else {
+    // Update existing aggregate window with new data.
+    data.front().UpdateWith(data_proto);
+    return IsClosed(data.front());
+  }
 }
 
 void AggDataStore::Clear() { data_.clear(); }
 
-bool AggDataStore::AddDataHelper(const AggregateDataProto& data_proto,
-                                 AggDataStore::AggDataQueue* data) {
-  if (data->empty() || IsNewAggregate(data_proto, data->front())) {
-    // Add a new aggregate window. Align timestamp.
-    bool old_window_not_closed = !data->empty() && !IsClosed(data->front());
-    data->push_front(AggregateData(data_proto));
-    data->front().start_ = AggWindowStart(data->front().start_);
-    if (data->size() > absl::GetFlag(FLAGS_agg_data_store_size)) {
-      data->pop_back();
-    }
-    return IsClosed(data->front()) || old_window_not_closed;
-  } else {
-    // Update existing aggregate window with new data.
-    data->front().UpdateWith(data_proto);
-    return IsClosed(data->front());
-  }
-}
-
 bool AggDataStore::IsNewAggregate(const AggregateDataProto& data_proto,
                                   const AggregateData& prev_agg) const {
   return data_proto.s() - prev_agg.start_ >=
-         window_size_ * NUM_MICROS_PER_SECOND;
+         window_size_ * NUM_MILLIS_PER_SECOND;
 }
 
 int64_t AggDataStore::AggWindowStart(int64_t start) const {
-  return start - start % (window_size_ * NUM_MICROS_PER_SECOND);
+  return start - start % (window_size_ * NUM_MILLIS_PER_SECOND);
 }
 
 bool AggDataStore::IsClosed(const AggregateData& data) const {
-  CHECK(data.end_ - data.start_ <= window_size_ * NUM_MICROS_PER_SECOND);
-  return data.end_ - data.start_ == window_size_ * NUM_MICROS_PER_SECOND;
+  CHECK(data.end_ - data.start_ <= window_size_ * NUM_MILLIS_PER_SECOND);
+  return data.end_ - data.start_ == window_size_ * NUM_MILLIS_PER_SECOND;
 }
 
 }  // namespace pasta

@@ -1,8 +1,8 @@
 #include "data_handler/data_client.h"
 
 #include "absl/flags/flag.h"
-#include "gtest/gtest.h"
 #include "glog/logging.h"
+#include "gtest/gtest.h"
 
 namespace pasta {
 

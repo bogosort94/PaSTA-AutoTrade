@@ -8,6 +8,8 @@
 #include <deque>
 #include <string>
 
+#define NUM_MILLIS_PER_SECOND 1000
+
 namespace pasta {
 
 class AggregateData {
@@ -51,9 +53,6 @@ class AggDataStore {
   void Clear();
 
  private:
-  // Add new aggregate data to a specific queue.
-  bool AddDataHelper(const AggregateDataProto& data_proto, AggDataQueue* data);
-
   // Determine if the new data still belongs to the previous aggregate window.
   bool IsNewAggregate(const AggregateDataProto& data_proto,
                       const AggregateData& prev_agg) const;

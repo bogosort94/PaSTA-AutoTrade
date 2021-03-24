@@ -5,24 +5,12 @@
 #include "glog/logging.h"
 #include "gtest/gtest.h"
 
-#include <vector>
-
 namespace pasta {
 
 namespace {
 
 class DataHandlerTest : public ::testing::Test {
  protected:
-  std::string GetMessage(std::vector<std::string> test_cases) {
-    CHECK(!test_cases.empty());
-    std::string msg = "[" + test_cases[0];
-    for (int i = 1; i < test_cases.size(); ++i) {
-      msg += "," + test_cases[i];
-    }
-    msg += "]";
-    return msg;
-  }
-
   DataHandler dh = DataHandler(nullptr);
 };
 
