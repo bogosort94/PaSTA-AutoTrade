@@ -44,7 +44,5 @@ bazel-PaSTA-AutoTrade
 Vagrantfile
 .idea/
 
-# Bazelrc file
-# This file may contain broker and data supplier credentials
-# Updating bazelrc file should use git add -f.
-.bazelrc
+# Local bazelrc file containing broker and data supplier credentials
+local.bazelrc
