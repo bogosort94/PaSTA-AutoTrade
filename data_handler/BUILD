@@ -2,6 +2,7 @@ cc_library(
   name = "data_client",
   hdrs = ["data_client.h"],
   srcs = ["data_client.cc"],
+  visibility = ["//visibility:public"],
   deps = [
       "@absl//absl/container:flat_hash_map",
       "@absl//absl/flags:flag",
@@ -11,7 +12,8 @@ cc_library(
   linkopts = ["-lpthread",
               "-lboost_system",
               "-lssl",
-              "-lcrypto",],
+              "-lcrypto",
+  ],
 )
 
 cc_library(
@@ -59,6 +61,8 @@ cc_test(
   srcs = ["data_client_test.cc"],
   deps = [
       ":data_client",
+      "//alpaca:alpaca",
+      "//cpp-httplib:httplib",
       "@absl//absl/flags:flag",
       "@com_github_google_glog//:glog",
       "@gtest//:gtest",

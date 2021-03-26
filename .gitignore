@@ -46,3 +46,6 @@ Vagrantfile
 
 # Local bazelrc file containing broker and data supplier credentials
 local.bazelrc
+
+# PaSTA output
+pasta.out

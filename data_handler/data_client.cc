@@ -17,11 +17,10 @@ const std::string DataClient::data_url = "wss://socket.polygon.io/stocks";
 std::string DataClient::GetCredential() {
   std::string credential_str;
   credential_str = std::getenv("POLYGON_KEY");
-  LOG(INFO) << "Got Polygon credential: " << credential_str;
   return credential_str;
 }
 
-void DataClient::SetAuthentication(const std::string auth) { auth_ = auth; }
+void DataClient::SetAuthentication(const std::string& auth) { auth_ = auth; }
 
 absl::Status DataClient::RegisterFunc(
     const std::string& name, std::function<void(const std::string&)> func) {
@@ -91,6 +90,8 @@ absl::Status DataClient::Run() {
     // are exchanged until the event loop starts running in the next line.
     c_.connect(con);
 
+    LOG(INFO) << "Data client starts running.";
+
     // Start the ASIO io_service run loop
     // this will cause a single connection to be made to the server. c.run()
     // will exit when this connection is closed.
@@ -106,6 +107,8 @@ absl::Status DataClient::Run() {
 void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
                            client::message_ptr msg) {
   websocketpp::lib::error_code ec;
+  DLOG(INFO) << "Data client in state: " << state_;
+  DLOG(INFO) << "Got message: " << msg->get_payload();
   switch (state_) {
     case INIT:
       if (msg->get_payload().find("Connected Successfully") !=
@@ -164,7 +167,7 @@ void DataClient::OnMessage(client* c, websocketpp::connection_hdl hdl,
       }
       break;
     case SUBSCRIBED:
-      for (auto name_func : reg_func_) {
+      for (auto& name_func : reg_func_) {
         name_func.second(msg->get_payload());
       }
       break;

@@ -11,7 +11,7 @@
 namespace pasta {
 
 ChaseMomentumStrategy::ChaseMomentumStrategy(DataHandler* dh)
-    : Strategy(dh), trading_(""), dry_run_(false) {
+    : Strategy(dh), trading_("") {
   LOG(INFO) << dh << " vs " << dh_;
   absl::LoadTimeZone("America/New_York", &nyc_);
 }
@@ -31,20 +31,20 @@ absl::Status ChaseMomentumStrategy::Init() {
         "Alpaca getting account information", "failure (code ",
         std::to_string(status.getCode()), "): ", status.getMessage()));
   }
-  account_ = std::make_unique<alpaca::Account>(account_response.second);
+  account_ = account_response.second;
 
-  if (account_->trading_blocked) {
+  if (account_.trading_blocked) {
     return absl::AbortedError("Account is currently resitricted from trading.");
   }
 
-  if (account_->shorting_enabled) {
+  if (account_.shorting_enabled) {
     return absl::AbortedError(
         "Shorting is enabled for this account. Please "
         "disable shorting for safety.");
   }
 
-  LOG(INFO) << account_->cash << " is available as cash.";
-  LOG(INFO) << account_->buying_power << " is available as buying power.";
+  LOG(INFO) << account_.cash << " is available as cash.";
+  LOG(INFO) << account_.buying_power << " is available as buying power.";
 
   dh_->RegisterCallback("ChaseMomentumStrategy process new data",
                         std::bind(&ChaseMomentumStrategy::ProcessNewData, this,
@@ -121,7 +121,7 @@ void ChaseMomentumStrategy::EnterTrade() {
   // Always leave $25,000 cash in the account to comply with the PDT rule.
   // TODO: This resitriction can be lifted when the project is proven effective.
   // TODO: Limit number of shares / amount of capital used.
-  int qty = (std::stod(account_->cash) - 25000.) * 0.9 / limit_price;
+  int qty = (std::stod(account_.cash) - 25000.) * 0.9 / limit_price;
   if (qty <= 0) {
     LOG(INFO) << "Trying to buy " << trading_ << " at " << limit_price
               << ", but the account does not have enough cash for 1 share.";
@@ -224,8 +224,20 @@ void ChaseMomentumStrategy::ClearPosition() {
     clear_ = false;
     trading_.clear();
   }
-}
 
-void ChaseMomentumStrategy::Test_SetDryRun() { dry_run_ = true; }
+  auto account_response = client_->getAccount();
+  if (auto status = account_response.first; !status.ok()) {
+    LOG(FATAL) << "Alpaca getting account information failure (code "
+               << status.getCode() << "): " << status.getMessage();
+  }
+  account_ = account_response.second;
+
+  if (account_.trading_blocked) {
+    LOG(FATAL) << "Account is currently resitricted from trading.";
+  }
+
+  LOG(INFO) << account_.cash << " is available as cash.";
+  LOG(INFO) << account_.buying_power << " is available as buying power.";
+}
 
 }  // namespace pasta

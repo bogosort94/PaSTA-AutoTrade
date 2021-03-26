@@ -32,16 +32,15 @@ class ChaseMomentumStrategy : public Strategy {
   absl::TimeZone nyc_;
 
   std::unique_ptr<alpaca::Client> client_;
-  std::unique_ptr<alpaca::Account> account_;
+  alpaca::Account account_;
   
   std::string trading_;
   int64_t quantity_;
   double breakeven_;
   int64_t enter_ts_;
   bool clear_;
-
-  bool dry_run_;
 };
 
 }  // namespace pasta
+
 #endif  // PASTA_STRATEGY_CHASE_MOMENTUM_STRATEGY_H_

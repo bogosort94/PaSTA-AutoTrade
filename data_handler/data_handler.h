@@ -8,8 +8,6 @@
 #include "data_handler/data_client.h"
 #include "proto/data.pb.h"
 
-#include <string_view>
-
 namespace pasta {
 
 enum DataStoreIndex {

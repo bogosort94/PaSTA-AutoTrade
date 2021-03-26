@@ -2,6 +2,7 @@ cc_library(
   name = "strategy",
   hdrs = ["strategy.h"],
   srcs = ["strategy.h"],
+  visibility = ["//visibility:public"],
   deps = ["//data_handler:data_handler"],
 )
 
@@ -9,9 +10,10 @@ cc_library(
   name = "chase_momentum_strategy",
   hdrs = ["chase_momentum_strategy.h"],
   srcs = ["chase_momentum_strategy.cc"],
+  visibility = ["//visibility:public"],
   deps = [
       ":strategy",
-      "@com_github_marpaia_alpaca_trade_api_cpp//alpaca:alpaca",
+      "@//alpaca:alpaca",
   ],
   linkopts = ["-ldl"],
 )

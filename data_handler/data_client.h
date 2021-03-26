@@ -5,7 +5,6 @@
 #include "absl/flags/flag.h"
 #include "absl/status/status.h"
 
-#include <string_view>
 #include <websocketpp/client.hpp>
 #include <websocketpp/config/asio_client.hpp>
 #include <websocketpp/frame.hpp>
@@ -25,7 +24,7 @@ class DataClient {
   DataClient() : status_(absl::OkStatus()), state_(INIT) {}
 
   std::string GetCredential();
-  void SetAuthentication(const std::string auth);
+  void SetAuthentication(const std::string& auth);
   absl::Status RegisterFunc(const std::string& name,
                             std::function<void(const std::string&)> func);
   absl::Status UnregisterFunc(const std::string& name);

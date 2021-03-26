@@ -7,8 +7,6 @@
 #include "google/protobuf/util/json_util.h"
 #include "proto/data.pb.h"
 
-#include <string_view>
-
 namespace pasta {
 
 DataHandler::DataHandler(DataClient* dc) : dc_(dc) {}
