@@ -11,11 +11,6 @@ namespace pasta {
 namespace {
 
 class ChaseMomentumStrategyTest : public ::testing::Test {
- public:
-  ChaseMomentumStrategyTest() {
-    s.Test_SetDryRun();
-  }
-
  protected:
   DataHandler dh = DataHandler(nullptr);
   ChaseMomentumStrategy s = ChaseMomentumStrategy(&dh);

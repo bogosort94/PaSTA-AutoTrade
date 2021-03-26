@@ -16,7 +16,6 @@ class ChaseMomentumStrategy : public Strategy {
   // Public for testing only.
   bool IsEntryPoint(const std::string& ticker);
 
-  void Test_SetDryRun();
  private:
   void ProcessNewData(const std::string& ticker);
 
