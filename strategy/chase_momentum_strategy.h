@@ -23,16 +23,17 @@ class ChaseMomentumStrategy : public Strategy {
 
   void PositionManagement();
 
-
   void EnterTrade();
 
   void ClearPosition();
+
+  bool IsStrategyTradingHour(absl::CivilMinute civil_min);
 
   absl::TimeZone nyc_;
 
   std::unique_ptr<alpaca::Client> client_;
   alpaca::Account account_;
-  
+
   std::string trading_;
   int64_t quantity_;
   double breakeven_;

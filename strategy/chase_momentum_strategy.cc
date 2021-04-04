@@ -75,8 +75,7 @@ void ChaseMomentumStrategy::MaybeEnterTrade(const std::string& ticker) {
 }
 
 // Enter trade when the following holds:
-// 1. Time is between 9:00 am and 9:25 am. We do not allow this to happen in
-//    regular hours to avoid handling halts.
+// 1. Time is in strategy trading hour.
 // 2. Price goes up by 20% in the past two 10-second candles.
 // 3. Price is between $2 and $50.
 // 4. The volume of the most recent 10-second candle is greater than 3000.
@@ -92,7 +91,7 @@ bool ChaseMomentumStrategy::IsEntryPoint(const std::string& ticker) {
   absl::CivilMinute civil_time =
       absl::ToCivilMinute(absl::FromUnixMillis(ts), nyc_);
 
-  if (civil_time.hour() != 9 || civil_time.minute() >= 25) {
+  if (!IsStrategyTradingHour(civil_time) {
     return false;
   }
 
@@ -238,6 +237,13 @@ void ChaseMomentumStrategy::ClearPosition() {
 
   LOG(INFO) << account_.cash << " is available as cash.";
   LOG(INFO) << account_.buying_power << " is available as buying power.";
+}
+
+// Returns true if time is in 9:00 am - 9:25 am, 9:45 am - 3:30 pm.
+bool ChaseMomentumStrategy::IsStrategyTradingHour(absl::CivilMinute civil_min) {
+  int64_t min_in_day = civil_min.hour() * 60 + civil_min.minute();
+  return (min_in_day >= 540 && min_in_day < 565) ||
+         (min_in_day >= 585 && min_in_day < 930);
 }
 
 }  // namespace pasta
