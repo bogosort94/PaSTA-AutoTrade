@@ -91,7 +91,7 @@ bool ChaseMomentumStrategy::IsEntryPoint(const std::string& ticker) {
   absl::CivilMinute civil_time =
       absl::ToCivilMinute(absl::FromUnixMillis(ts), nyc_);
 
-  if (!IsStrategyTradingHour(civil_time) {
+  if (!IsStrategyTradingHour(civil_time)) {
     return false;
   }
 
